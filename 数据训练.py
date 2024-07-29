@@ -10,6 +10,13 @@ import time
 import cv2
 import numpy as np
 
+'''
+流程
+    训练数据
+        读取全部数据
+        训练数据
+        保存数据
+'''
 
 def get_image_label(path):
     image_paths = []  # 所有图片路径
@@ -35,7 +42,9 @@ def get_image_label(path):
     for n, imagePath in enumerate(image_paths):
         index = ids[n]
         img = cv2.imread(imagePath)
-        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # 统一尺寸
+        resize = cv2.resize(src=img, dsize=(200, 200))
+        gray_img = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
         # 人脸检测
         face = face_cascade.detectMultiScale(gray_img)
         # 遍历人脸
@@ -53,10 +62,15 @@ if __name__ == '__main__':
     path = './faces/'
     # 获取人脸数据和身份信息
     faces, ids = get_image_label(path)
+
     # 导入人脸识别模型
+    # 使用LBPHFaceRecognizer_create()函数创建的人脸识别模型可以用于 训练 和 识别
+    # 训练过程中，‌需要提供一组人脸图像及其对应的标签（‌通常是人的身份信息）‌。
+    # ‌训练完成后，‌模型可以用于实时的人脸识别，‌即通过输入一张人脸图像，
+    # ‌模型可以识别出图像中的人脸是否在训练集中出现过，‌如果出现过，‌还可以给出具体的身份信息。‌
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     # # 训练模型
     recognizer.train(faces, np.array(ids))
-    trainer_date = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+
     # 保存模型
-    recognizer.save('./face_yml/{0}.yml'.format(trainer_date))
+    recognizer.save('./face_yml/face_data.yml')

@@ -7,6 +7,16 @@ import time
 
 import cv2
 
+'''
+流程
+    人脸录入
+        打开摄像头
+        输入名字
+        检测人脸
+        保存图片
+'''
+
+
 # 1.调用摄像头
 # CAP_DSHOW,opencv提供捕获摄像头api，用于初始化摄像头参数信息
 cap = cv2.VideoCapture(0)
