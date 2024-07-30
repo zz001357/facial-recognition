@@ -31,14 +31,15 @@ def face_detect_def(resize_img):
     for x, y, w, h in faces:
         cv2.rectangle(resize_img, (x, y), (x + w, y + h), color=(0, 0, 255), thickness=2)
     cv2.imshow("face_detect", resize_img)
+    cv2.waitKey(0)
 
 
 # 2.导入图片
-img = cv2.imread('./img/DSCF1857.jpg')
+img = cv2.imread('./faces/2_zhangze/zhangze_1.jpg')
 
 print("修改前", img.shape)
-resize_img = cv2.resize(src=img, dsize=(664, 293))
-print("修改后", resize_img.shape)
+resize_img = cv2.resize(src=img, dsize=(295,413))
+print("修改后,一寸照片413*295", resize_img.shape)
 
 # 人脸检测
 face_detect_def(resize_img)

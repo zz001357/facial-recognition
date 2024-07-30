@@ -18,17 +18,17 @@ import numpy as np
         保存数据
 '''
 
+
 def get_image_label(path):
     image_paths = []  # 所有图片路径
     face_samples = []  # 人脸数据
     ids = []  # 身份编号
     labels_list = []  # 模型标签编号
     # 加载分类器
-    face_cascade = cv2.CascadeClassifier(
-        'D:/PyProjects/opencv/sources/data/haarcascades/haarcascade_frontalface_default.xml')
+    haarcascades = 'D:/PyProjects/opencv/sources/data/haarcascades/haarcascade_frontalface_alt2.xml'
+    face_cascade = cv2.CascadeClassifier(haarcascades)
     # 获取faces路径下的所有文件夹
     dirs = os.listdir(path)
-
     # os.listdir()返回指定路径下的文件和文件夹列表
     # 获取每一个文件夹下的图片路径
     for f in dirs:
@@ -37,18 +37,20 @@ def get_image_label(path):
             id = int(f.split('_')[0])
             ids.append(id)
             image_paths.append(os.path.join(f_path, i))
-
     # 遍历图片
     for n, imagePath in enumerate(image_paths):
         index = ids[n]
         img = cv2.imread(imagePath)
         # 统一尺寸
-        resize = cv2.resize(src=img, dsize=(200, 200))
-        gray_img = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
+        resize_img = cv2.resize(src=img, dsize=(295, 413))
+        gray_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2GRAY)
         # 人脸检测
-        face = face_cascade.detectMultiScale(gray_img)
+        face = face_cascade.detectMultiScale(gray_img, 1.3, 5,0)
+        print("发现{0}个人脸!".format(len(face)))
+
         # 遍历人脸
         for (x, y, w, h) in face:
+            cv2.rectangle(resize_img, (x, y), (x + w, y + h), color=(0, 0, 255), thickness=2)
             # 添加人脸数据
             face_samples.append(gray_img[y:y + h, x:x + w])
             labels_list.append(index)
@@ -61,7 +63,9 @@ if __name__ == '__main__':
     # 模型路径
     path = './faces/'
     # 获取人脸数据和身份信息
-    faces, ids = get_image_label(path)
+    face_samples_list, labels_list = get_image_label(path)
+    print(labels_list)
+    print(face_samples_list)
 
     # 导入人脸识别模型
     # 使用LBPHFaceRecognizer_create()函数创建的人脸识别模型可以用于 训练 和 识别
@@ -70,7 +74,7 @@ if __name__ == '__main__':
     # ‌模型可以识别出图像中的人脸是否在训练集中出现过，‌如果出现过，‌还可以给出具体的身份信息。‌
     recognizer = cv2.face.LBPHFaceRecognizer_create()
     # # 训练模型
-    recognizer.train(faces, np.array(ids))
+    recognizer.train(face_samples_list, np.array(labels_list))
 
     # 保存模型
     recognizer.save('./face_yml/face_data.yml')
