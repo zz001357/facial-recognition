@@ -16,7 +16,6 @@ import cv2
         保存图片
 '''
 
-
 # 1.调用摄像头
 # CAP_DSHOW,opencv提供捕获摄像头api，用于初始化摄像头参数信息
 cap = cv2.VideoCapture(0)
